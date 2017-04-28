@@ -34661,9 +34661,9 @@ module.exports =
 	        console.log("data----", data);
 	        return this.createQuestionservice.create(data);
 	    };
-	    CreateQuestionFacade.prototype.findbyCategory = function (categoryId) {
+	    CreateQuestionFacade.prototype.findbyCategory = function (categoryId, lastqsnid) {
 	        console.log("in categoryId findBycategoryId()");
-	        return this.createQuestionservice.findById(categoryId);
+	        return this.createQuestionservice.findById(categoryId, lastqsnid);
 	    };
 	    return CreateQuestionFacade;
 	}());
@@ -34735,7 +34735,7 @@ module.exports =
 	            });
 	        });
 	    };
-	    CreateQuestionServiceImpl.prototype.findById = function (categoryId) {
+	    CreateQuestionServiceImpl.prototype.findById = function (categoryId, lastqsnid) {
 	        console.log("in CreateQuestionServiceImpl find()");
 	        var queryParams = {
 	            TableName: "question",
@@ -34746,8 +34746,18 @@ module.exports =
 	            },
 	            ExpressionAttributeValues: {
 	                ":categoryIdFilter": categoryId
-	            }
+	            },
+	            Limit: 2
 	        };
+	        console.log(lastqsnid);
+	        if (lastqsnid) {
+	            console.log("-----------------------------with data-----------------------");
+	            console.log(" data-------------", lastqsnid);
+	            queryParams.ExclusiveStartKey = { Qsn_id: lastqsnid, Category: categoryId };
+	        }
+	        else {
+	            console.log("----------------------------without data----------------------");
+	        }
 	        var documentClient = new DocumentClient();
 	        return rxjs_1.Observable.create(function (observer) {
 	            console.log("Executing query with parameters " + queryParams);
@@ -34763,13 +34773,14 @@ module.exports =
 	                    observer.complete();
 	                    return;
 	                }
+	                console.log("lllllllllllllll", data.LastEvaluatedKey);
 	                data.Items.forEach(function (item) {
 	                    console.log("candidate Id item", item);
 	                    // console.log(`candidate firstName ${item.firstName}`);
 	                    // console.log(`candidate lastName ${item.lastName}`);
 	                    // console.log(`candidate email ${item.email}`);
 	                });
-	                console.log(data.Items);
+	                //console.log(data.Items);
 	                observer.next(data.Items);
 	                observer.complete();
 	            });
@@ -34892,17 +34903,41 @@ module.exports =
 	    createQuestionPaperserviceImpl.prototype.createQuestionPaper = function (data) {
 	        console.log("in createQuestionPaperserviceImpl create()-----0000000000", data.length);
 	        var documentClient = new DocumentClient();
+	        var qsnppr = [];
+	        for (var item = 0; item < data.length; item++) {
+	            console.log("itemasdfasdfdf===========", data[item].QsnId);
+	            var myObj = {
+	                PutRequest: {
+	                    Item: {
+	                        "Qsn_Ppr_Id": uuid,
+	                        "Qsn_Id": data[item].QsnId,
+	                        "Category": data[item].Category
+	                    }
+	                }
+	            };
+	            qsnppr.push(myObj);
+	        }
+	        // data.forEach((item) => {
+	        //     console.log("in loooooooooop");
+	        //     let myObj = {
+	        //         PutRequest:{
+	        //                      Item:{
+	        //                          "Qsn_Ppr_Id":uuid,
+	        //                          "Qsn_Id":item.QsnId,
+	        //                          "Category":item.Category
+	        //                         }
+	        //                     }
+	        //                 }
+	        //     qsnppr.push(myObj)
+	        // });
 	        var params = {
-	            TableName: "questionPaper",
-	            Item: {
-	                Qsn_Ppr_Id: uuid,
-	                Qsn_Id: data.QsnId,
-	                Category: data.Category
+	            RequestItems: {
+	                "questionPaper": qsnppr
 	            }
 	        };
 	        console.log("params============================", params);
 	        return rxjs_1.Observable.create(function (observer) {
-	            documentClient.put(params, function (err, data) {
+	            documentClient.batchWrite(params, function (err, data) {
 	                console.log("eeeeeeeeeeeeeeeeee", err);
 	                if (err) {
 	                    if (err.code === 'ConditionalCheckFailedException') {

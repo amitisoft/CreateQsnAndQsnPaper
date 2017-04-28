@@ -26,19 +26,51 @@ export class createQuestionPaperserviceImpl {
         console.log("in createQuestionPaperserviceImpl create()-----0000000000",data.length);
         const documentClient = new DocumentClient();
 
-        const params = {
-            TableName: "questionPaper",
-            Item: {
-                Qsn_Ppr_Id: uuid,
-                Qsn_Id:data.QsnId,
-                Category: data.Category
-            }
-        };
+const qsnppr = [];
+
+for(var item=0;item<data.length;item++){
+    console.log("itemasdfasdfdf===========",data[item].QsnId);
+   let myObj = {
+        PutRequest:{
+                     Item:{
+                         "Qsn_Ppr_Id":uuid,
+                         "Qsn_Id":data[item].QsnId,
+                         "Category":data[item].Category
+                        }
+                    }
+                }
+    qsnppr.push(myObj)
+
+
+}
+// data.forEach((item) => {
+//     console.log("in loooooooooop");
+//     let myObj = {
+//         PutRequest:{
+//                      Item:{
+//                          "Qsn_Ppr_Id":uuid,
+//                          "Qsn_Id":item.QsnId,
+//                          "Category":item.Category
+//                         }
+//                     }
+//                 }
+//     qsnppr.push(myObj)
+// });
+
+const params = {
+RequestItems: {
+        "questionPaper": qsnppr
+}
+};
+
+
+
+
 
 console.log("params============================",params)
         return Observable.create((observer:Observer<Question>) => {
 
-            documentClient.put(params, (err, data: any) => {
+            documentClient.batchWrite(params, (err, data: any) => {
                 console.log("eeeeeeeeeeeeeeeeee",err);
                 if(err) {
                     if(err.code === 'ConditionalCheckFailedException'){

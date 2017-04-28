@@ -14,8 +14,8 @@ export class CreateQuestionFacade {
         return this.createQuestionservice.create(data);
     } 
 
-     findbyCategory(categoryId: string): Observable<Question[]> {
+     findbyCategory(categoryId: string,lastqsnid:string): Observable<Question[]> {
         console.log("in categoryId findBycategoryId()");
-        return this.createQuestionservice.findById(categoryId);
+        return this.createQuestionservice.findById(categoryId,lastqsnid);
     }
 }

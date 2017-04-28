@@ -24,9 +24,9 @@ static getQuestionByCategory(httpContext:HttpContextImpl,injector:Injector):void
         console.log("pathParameters-----??????????",body);
 
         let categoryId = body["Category"];
-
-       console.log("categoryId......",categoryId);
-        injector.get(CreateQuestionFacade).findbyCategory(categoryId)
+        let lastqsnid = body["LastqsnId"]
+       console.log("lastqsnid......",lastqsnid);
+        injector.get(CreateQuestionFacade).findbyCategory(categoryId,lastqsnid)
             .subscribe(result => {
                 httpContext.ok(200, result);
             },  err => {

@@ -60,7 +60,7 @@ export class CreateQuestionServiceImpl {
 
     }
 
-    findById(categoryId:string): Observable<Question[]> {
+    findById(categoryId:string,lastqsnid:string): Observable<Question[]> {
         console.log("in CreateQuestionServiceImpl find()");
 
         const queryParams: DynamoDB.Types.QueryInput = {
@@ -72,8 +72,19 @@ export class CreateQuestionServiceImpl {
             },
             ExpressionAttributeValues: {
                 ":categoryIdFilter": categoryId
-            }
+            },
+            Limit:2
         }
+
+console.log(lastqsnid)     
+     if (lastqsnid){
+        console.log("-----------------------------with data-----------------------");
+        console.log(" data-------------",lastqsnid);
+        queryParams.ExclusiveStartKey= { Qsn_id: lastqsnid,Category:categoryId}
+          } else {
+          console.log("----------------------------without data----------------------");
+        }
+
 
 
         const documentClient = new DocumentClient();
@@ -91,13 +102,14 @@ export class CreateQuestionServiceImpl {
                     observer.complete();
                     return;
                 }
+                console.log("lllllllllllllll",data.LastEvaluatedKey);
                 data.Items.forEach((item) => {
                     console.log("candidate Id item",item);
                     // console.log(`candidate firstName ${item.firstName}`);
                     // console.log(`candidate lastName ${item.lastName}`);
                     // console.log(`candidate email ${item.email}`);
                 });
-                console.log(data.Items);
+                //console.log(data.Items);
                 observer.next(data.Items);
                 observer.complete();
 
