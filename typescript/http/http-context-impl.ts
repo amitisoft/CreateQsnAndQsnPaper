@@ -41,6 +41,7 @@ export class HttpContextImpl {
     }
 
     getRequestBody(): string {
+        console.log("this.lambdaEvent.body----------",this.lambdaEvent.body);
         return this.lambdaEvent.body;
     }
 

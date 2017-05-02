@@ -6,9 +6,9 @@ export class CreateQuestionHandler {
 
     static createQuestion (httpContext:HttpContextImpl,injector:Injector) : void {
           console.log("CreateQuestionHandler");
-    let body = httpContext.getRequestBody();
+        let body = httpContext.getRequestBody();
         console.log("pathParameters-----",body);
-
+       // body = JSON.parse(body);
         injector.get(CreateQuestionFacade).createQuestion(body)
             .subscribe(result => {
                 httpContext.ok(200, result);
@@ -19,12 +19,12 @@ export class CreateQuestionHandler {
 
 static getQuestionByCategory(httpContext:HttpContextImpl,injector:Injector):void{
 
-    let body = httpContext.getRequestBody();
+    let pathParam = httpContext.getPathParameters();
 
-        console.log("pathParameters-----??????????",body);
+        console.log("pathParameters-----??????????",pathParam);
 
-        let categoryId = body["Category"];
-        let lastqsnid = body["LastqsnId"]
+        let categoryId = pathParam["Category"];
+        let lastqsnid = pathParam["LastqsnId"];
        console.log("lastqsnid......",lastqsnid);
         injector.get(CreateQuestionFacade).findbyCategory(categoryId,lastqsnid)
             .subscribe(result => {
@@ -32,9 +32,6 @@ static getQuestionByCategory(httpContext:HttpContextImpl,injector:Injector):void
             },  err => {
                 httpContext.fail(err, 500);
             });
-
-
-
 }
 
 }

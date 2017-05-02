@@ -43,10 +43,11 @@ export class CreateQuestionServiceImpl {
         };
 
         return Observable.create((observer:Observer<Question>) => {
-
+             console.log(params);
             documentClient.put(params, (err, data: any) => {
                 console.log(err);
                 if(err) {
+                    console.log("ifffffffffffffffffffffff");
                     if(err.code === 'ConditionalCheckFailedException'){
                         observer.error(err);
                         return;
@@ -102,7 +103,7 @@ console.log(lastqsnid)
                     observer.complete();
                     return;
                 }
-                console.log("lllllllllllllll",data.LastEvaluatedKey);
+                // console.log("lllllllllllllll",data);
                 data.Items.forEach((item) => {
                     console.log("candidate Id item",item);
                     // console.log(`candidate firstName ${item.firstName}`);
