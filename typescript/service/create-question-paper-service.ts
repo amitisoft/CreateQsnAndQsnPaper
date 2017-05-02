@@ -43,19 +43,6 @@ for(var item=0;item<data.length;item++){
 
 
 }
-// data.forEach((item) => {
-//     console.log("in loooooooooop");
-//     let myObj = {
-//         PutRequest:{
-//                      Item:{
-//                          "Qsn_Ppr_Id":uuid,
-//                          "Qsn_Id":item.QsnId,
-//                          "Category":item.Category
-//                         }
-//                     }
-//                 }
-//     qsnppr.push(myObj)
-// });
 
 const params = {
 RequestItems: {
