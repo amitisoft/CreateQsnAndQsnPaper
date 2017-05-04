@@ -8,7 +8,6 @@ export class CreateQuestionHandler {
           console.log("CreateQuestionHandler");
         let body = httpContext.getRequestBody();
         console.log("pathParameters-----",body);
-       // body = JSON.parse(body);
         injector.get(CreateQuestionFacade).createQuestion(body)
             .subscribe(result => {
                 httpContext.ok(200, result);
