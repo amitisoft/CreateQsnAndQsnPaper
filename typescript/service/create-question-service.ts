@@ -101,7 +101,7 @@ console.log("parammmmmmmmmmmmmmmmmmmm00000000000000------------",data["Qsn"]);
             Limit:2
         }
 
-console.log(lastqsnid)     
+console.log(lastqsnid!="null")     
      if (lastqsnid){
         console.log("-----------------------------with data-----------------------");
         console.log(" data-------------",lastqsnid);
